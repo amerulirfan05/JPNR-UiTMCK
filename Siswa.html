@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Sewa Siswa - JPNR UiTMCK</title>
+    
+    <style>
+        /* =========================================
+           1. ANIMASI & ASAS (GLOBAL)
+           ========================================= */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: #ffffff;
+            background-image: url('Gambar/Background batik.jpeg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.8); 
+            z-index: -1;
+        }
+
+        /* =========================================
+           2. HEADER & NAVIGASI
+           ========================================= */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            background-color: #B7B7B7;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            animation: none !important;
+        }
+
+        .header-pill {
+            display: flex;
+            align-items: center;
+            background-color: #E4E0E1;
+            padding: 4px;
+            border-radius: 50px;
+            max-width: 55px;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-pill.active {
+            max-width: 1100px;
+            padding-right: 35px;
+            overflow: visible;
+        }
+
+        .menu-btn {
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .menu-btn img { width: 240%; height: 240%; object-fit: contain; }
+
+        .pill-nav {
+            display: flex;
+            gap: 60px;
+            margin-left: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            align-items: center;
+        }
+
+        .header-pill.active .pill-nav { opacity: 1; pointer-events: auto; }
+
+        .pill-nav span { cursor: pointer; transition: 0.3s; color: #333; }
+        .pill-nav span:hover { color: white; }
+
+        .dropdown-active-style {
+            background-color: black;
+            color: white !important;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
+        /* --- DROPDOWN --- */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #E4E0E1;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            top: 100%;
+            left: 0;
+            z-index: 1001;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            border-radius: 10px;
+        }
+
+        .dropdown-content a:hover { background-color: #B7B7B7; color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .header-text {
+            text-align: right;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        /* =========================================
+           3. KANDUNGAN UTAMA
+           ========================================= */
+        .container {
+            max-width: 100%;
+            margin: 80px auto 0;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .main-content {
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .main-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* --- GRID RUMAH --- */
+        .house-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .house-card {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+            cursor: pointer; /* Menunjukkan kad boleh diklik */
+        }
+
+        .house-card:hover { transform: translateY(-10px); }
+
+        .img-box {
+            width: 100%;
+            height: 250px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .label-box {
+            background-color: #959595;
+            margin-top: 15px;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 5px;
+            text-transform: uppercase;
+        }
+
+        /* --- PAGINATION STYLING --- */
+        .pagination-container {
+            text-align: center;
+            margin: 50px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .pagination-container button {
+            padding: 10px 25px;
+            border: 2px solid #333;
+            background-color: white;
+            color: #333;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-container button:hover:not(:disabled) {
+            background-color: #333;
+            color: white;
+        }
+
+        .pagination-container button:disabled {
+            border-color: #ccc;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #pageIndicator {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* =========================================
+           4. FOOTER
+           ========================================= */
+        footer {
+            margin-top: 80px;
+            padding: 60px 40px;
+            background-color: #ffffff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-left h2 { margin-bottom: 20px; }
+        .social-links { display: flex; gap: 15px; }
+        .footer-right { display: flex; gap: 100px; }
+        .footer-col h4 { margin-bottom: 15px; color: #666; font-size: 0.9rem; }
+        .footer-col p { margin: 5px 0; color: #999; font-size: 0.85rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-pill" id="headerPill">
+            <button class="menu-btn" onclick="togglePillMenu()">
+                <img src="Gambar/Logo JPNR.png" alt="Logo">
+            </button>
+            
+            <nav class="pill-nav">
+                <span onclick="window.location.href='landingpage.html'">Home</span>
+                <span onclick="window.location.href='careline.html'">Careline</span>
+                
+                <div class="dropdown">
+                    <span class="dropdown-active-style">Rumah Sewa</span>
+                    <div class="dropdown-content">
+                        <a href="siswa.html">Siswa</a>
+                        <a href="siswi.html">Siswi</a>
+                    </div>
+                </div>
+
+                <span onclick="window.location.href='organisasi.html'">Organisasi</span>
+                <span>Galeri</span>
+            </nav>
+        </div>
+
+        <div class="header-text">
+            JAWATANKUASA PERWAKILAN NON RESIDENT<br>
+            UiTM CAWANGAN KELANTAN, KAMPUS MACHANG
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="main-content">
+            <h1>RUMAH SEWA SISWA</h1>
+            
+            <div class="house-grid" id="houseGrid">
+                </div>
+
+            <div class="pagination-container">
+                <button onclick="changePage(-1)" id="prevBtn">Kembali</button>
+                <span id="pageIndicator">Halaman 1</span>
+                <button onclick="changePage(1)" id="nextBtn">Seterusnya</button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-left">
+                <h2>JPNR UiTMCK</h2>
+                <div class="social-links">
+                    <span>(FB)</span> <span>(IG)</span> <span>(YT)</span>
+                </div>
+            </div>
+            
+            <div class="footer-right">
+                <div class="footer-col">
+                    <h4>Info</h4>
+                    <p>UiTM Website</p>
+                    <p>HEP</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p>Hubungi Kami</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function togglePillMenu() {
+            document.getElementById("headerPill").classList.toggle("active");
+        }
+
+        // Konfigurasi Pagination
+        const totalHouses = 35;
+        const housesPerPage = 16;
+        let currentPage = 1;
+
+        // Senarai Nama Rumah
+        const senaraiNama = [
+            "CASA EMARIEYS", "MYSARAH HOSTEL", "RUMAH SEWA CIK YAH", "ALIFF HOSTEL",
+            "DESA BUKIT BUNGA", "RUMAH DIHATIKU", "AIMARISA HOSTEL", "RUMAH SEWA TAMAN IMPIAN",
+            "TAMAN ALIA HOSTEL", "HOSTEL HAJI HARIS", "KEDIAMAN NORIZAN", "WADI HANANA",
+            "HOSTEL SAINIZAM", "LORONG HAJI ISMAIL", "AMAN", "ZUL HOSTEL",
+            "DELIMA ZAITIEY 1", "TERATAK CHE DAH", "PADANG SELISING VILLA HOSTEL", "WANNA HOSTEL",
+            "RUMAH SEWA ROZI", "RUMAH SEWA UST.ABU AMMAR", "TERATAK AL FATEH", "RUMAH KAK YAH",
+            "LIZALIZI HOSTEL", "NNZ 2 HOSTEL", "SRI MAKMUR RESIDENCE",
+            "TZ HOSTEL", "TERATAK CAMELLIA", "RUMAH KEMBAR", "AL FATEH HOUSE",
+            "AL BAQARAH", "RUMAH SEWA CIKGU MI", "TERATAK AMAN", "KB HOSTEL"
+        ];
+
+        // Senarai Gambar Padanan (Pastikan urutan sama dengan senaraiNama)
+        const senaraiGambar = [
+            "Rumah Siswa/casa_emarieys.jpeg", 
+            "Rumah Siswa/mysarah_hostel.jpeg", 
+            "Rumah Siswa/cik_yah.jpeg",
+            "Rumah Siswa/aliff_hostel.jpeg",
+            "Rumah Siswa/desa_bukit_bunga.jpeg",
+            "Rumah Siswa/rumah_dihatiku.jpeg",
+            "Rumah Siswa/aimarisa_hostel.jpeg",
+            "Rumah Siswa/taman_impian.jpeg",
+            "Rumah Siswa/taman_alia.jpeg",
+            "Rumah Siswa/haji_haris.jpeg",
+            "Rumah Siswa/norizan.jpeg",
+            "Rumah Siswa/wadi_hanana.jpeg",
+            "Rumah Siswa/sainizam.jpeg",
+            "Rumah Siswa/haji_ismail.jpeg",
+            "Rumah Siswa/aman.jpeg",
+            "Rumah Siswa/zul_hostel.jpeg",
+            "Rumah Siswa/delima_zaitiey.jpeg",
+            "Rumah Siswa/che_dah.jpeg",
+            "Rumah Siswa/padang_selising.jpeg",
+            "Rumah Siswa/wanna_hostel.jpeg",
+            "Rumah Siswa/rozi.jpeg",
+            "Rumah Siswa/abu_ammar.jpeg",
+            "Rumah Siswa/al_fateh.jpeg",
+            "Rumah Siswa/kak_yah.jpeg",
+            "Rumah Siswa/lizalizi.jpeg",
+            "Rumah Siswa/nnz_2.jpeg",
+            "Rumah Siswa/sri_makmur.jpeg",
+            "Rumah Siswa/tz_hostel.jpeg",
+            "Rumah Siswa/camellia.jpeg",
+            "Rumah Siswa/rumah_kembar.jpeg",
+            "Rumah Siswa/al_fateh_house.jpeg",
+            "Rumah Siswa/al_baqarah.jpeg",
+            "Rumah Siswa/cikgu_mi.jpeg",
+            "Rumah Siswa/teratak_aman.jpeg",
+            "Rumah Siswa/kb_hostel.jpeg",
+            // Anda boleh tambah lagi path gambar di sini mengikut turutan nama di atas
+        ];
+
+        function getHouseLabel(index) {
+            return senaraiNama[index] ? senaraiNama[index] : "Rumah " + (index + 1);
+        }
+
+        function getHouseImage(index) {
+            // Jika ada gambar dalam senarai, guna gambar tersebut. Jika tidak, guna gambar default.
+            return senaraiGambar[index] ? senaraiGambar[index] : "Rumah Siswa/Rumah contoh.webp";
+        }
+
+        function goToDetail(houseLabel) {
+            window.location.href = `Detail-rumah.html?rumah=${encodeURIComponent(houseLabel)}`;
+        }
+
+        function renderHouses() {
+            const grid = document.getElementById('houseGrid');
+            const start = (currentPage - 1) * housesPerPage;
+            const end = Math.min(start + housesPerPage, totalHouses);
+            
+            grid.innerHTML = ""; 
+
+            for (let i = start; i < end; i++) {
+                const houseLabel = getHouseLabel(i);
+                const houseImg = getHouseImage(i);
+                const card = `
+                    <div class="house-card" onclick="goToDetail('${houseLabel}')">
+                        <div class="img-box">
+                            <img src="${houseImg}" alt="${houseLabel}">
+                        </div>
+                        <div class="label-box">${houseLabel}</div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            }
+
+            const totalPages = Math.ceil(totalHouses / housesPerPage);
+            document.getElementById('pageIndicator').innerText = `Halaman ${currentPage} / ${totalPages}`;
+            
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (currentPage === totalPages);
+            
+            if(window.scrollY > 300) {
+                window.scrollTo({top: 200, behavior: 'smooth'});
+            }
+        }
+
+        function changePage(step) {
+            currentPage += step;
+            renderHouses();
+        }
+
+        renderHouses();
+    </script>
+</body>
+</html>

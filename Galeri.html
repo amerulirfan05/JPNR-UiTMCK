@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri - JPNR UiTMCK</title>
+
+    <style>
+        /* =========================================
+           3. GENERAL BODY & BACKGROUND
+           ========================================= */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; padding: 0;
+            color: #333; line-height: 1.6;
+            overflow-x: hidden;
+            background-image: url('Gambar/Galeri BG.png'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.8); 
+            z-index: -1;
+        }
+
+        /* =========================================
+           4. HEADER & NAVIGATION
+           ========================================= */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px; 
+            background-color: #B7B7B7; 
+            width: 100%;
+            position: fixed;
+            top: 0; left: 0;
+            box-sizing: border-box; 
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-pill {
+            display: flex;
+            align-items: center;
+            background-color: #E4E0E1;
+            padding: 4px; 
+            border-radius: 50px;
+            max-width: 55px;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-pill.active {
+            max-width: 1100px; 
+            padding-right: 35px;
+            overflow: visible; 
+        }
+
+        .menu-btn {
+            background: white; border: none; border-radius: 50%;
+            width: 45px; height: 45px; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; padding: 0; overflow: hidden; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .menu-btn img { width: 180%; height: 180%; object-fit: contain; }
+
+        .pill-nav {
+            display: flex;
+            gap: 60px;
+            margin-left: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            align-items: center;
+        }
+
+        .header-pill.active .pill-nav { opacity: 1; pointer-events: auto; }
+        .pill-nav span { cursor: pointer; transition: 0.3s; color: #333; }
+        .pill-nav span:hover { color: white; }
+
+        .pill-nav span.active, 
+        .pill-nav .dropdown.active .dropbtn {
+            background-color: black;
+            color: white !important;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #E4E0E1;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            top: 100%; left: 0; z-index: 1001;
+        }
+        .dropdown-content a {
+            color: #333; padding: 12px 16px; text-decoration: none;
+            display: block; font-size: 0.9rem; transition: 0.3s; border-radius: 10px;
+        }
+        .dropdown-content a:hover { background-color: #B7B7B7; color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .header-text {
+            text-align: right; font-weight: bold; font-size: 0.8rem;
+            text-transform: uppercase; color: #333; line-height: 1.2;
+        }
+
+        /* =========================================
+           7. FOOTER (UPDATED - LEFT & RIGHT)
+           ========================================= */
+        footer {
+            margin-top: auto; /* Memastikan footer di bawah */
+            padding: 20px 50px; 
+            background-color: #fff; /* Warna putih seperti dalam gambar */
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-top: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .footer-left {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .footer-right {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .footer-right span {
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .footer-right span:hover {
+            text-decoration: underline;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-pill" id="headerPill">
+            <button class="menu-btn" onclick="togglePillMenu()">
+                <img src="Gambar/Logo JPNR.png" alt="Logo">
+            </button>
+            <nav class="pill-nav">
+                <span onclick="window.location.href='landingpage.html'">Home</span>
+                <span onclick="window.location.href='careline.html'">Careline</span>
+                
+                
+                <div class="dropdown">
+                    <span class="dropbtn">Rumah Sewa</span>
+                    <div class="dropdown-content">
+                        <a href="siswa.html">Siswa</a>
+                        <a href="siswi.html">Siswi</a>
+                    </div>
+                </div>
+                <span onclick="window.location.href='Organisasi.html'">Organisasi</span>
+                <span class="active" onclick="window.location.href='Galeri.html'">Galeri</span>
+            </nav>
+        </div>
+
+        <div class="header-text">
+            JAWATANKUASA PERWAKILAN NON RESIDENT<br>
+            UiTM CAWANGAN KELANTAN, KAMPUS MACHANG
+        </div>
+    </header>
+
+    <div style="flex: 1; margin-top: 100px; padding: 20px;">
+        </div>
+
+    <footer>
+        <div class="footer-left">
+            JPNR UiTMCK © 2026
+        </div>
+        <div class="footer-right">
+            <span>UiTM Website</span> | 
+            <span>HEP</span> | 
+            <span>Hubungi Kami</span>
+        </div>
+    </footer>
+
+    <script>
+        function togglePillMenu() {
+            const pill = document.getElementById("headerPill");
+            pill.classList.toggle("active");
+        }
+    </script>
+</body>
+</html>

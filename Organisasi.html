@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organisasi - JPNR UiTMCK</title>
+    <style>
+        /* =========================================
+           1. CORE STYLE & BACKGROUND (IDENTIKAL)
+           ========================================= */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; padding: 0;
+            color: #333; line-height: 1.6;
+            overflow-x: hidden;
+            background-color: #ffffff;
+            /* Setup Background Batik */
+            background-image: url('Gambar/Background batik.jpeg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        /* Layer Putih Lutsinar supaya teks jelas */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: -1;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================
+           2. HEADER & NAVIGATION
+           ========================================= */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px; 
+            background-color: #B7B7B7; 
+            width: 100%;
+            position: fixed;
+            top: 0; left: 0;
+            box-sizing: border-box; 
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-pill {
+            display: flex;
+            align-items: center;
+            background-color: #E4E0E1;
+            padding: 4px; 
+            border-radius: 50px;
+            max-width: 55px;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-pill.active {
+            max-width: 1100px; 
+            padding-right: 35px;
+            overflow: visible; 
+        }
+
+        .menu-btn {
+            background: white; border: none; border-radius: 50%;
+            width: 45px; height: 45px; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; padding: 0; overflow: hidden; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .menu-btn img { width: 180%; height: 180%; object-fit: contain; }
+
+        .pill-nav {
+            display: flex;
+            gap: 60px;
+            margin-left: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            align-items: center;
+        }
+
+        .header-pill.active .pill-nav { opacity: 1; pointer-events: auto; }
+        
+        .pill-nav span { 
+            cursor: pointer; 
+            transition: 0.3s; 
+            color: #333; 
+            position: relative;
+            z-index: 1005;
+        }
+        .pill-nav span:hover { color: white; }
+
+        .pill-nav span.active {
+            background-color: black;
+            color: white !important;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
+        /* --- DROPDOWN --- */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #E4E0E1;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            top: 100%; left: 0; z-index: 1001;
+        }
+        .dropdown-content a {
+            color: #333; padding: 12px 16px; text-decoration: none;
+            display: block; font-size: 0.9rem; transition: 0.3s; border-radius: 10px;
+        }
+        .dropdown-content a:hover { background-color: #B7B7B7; color: white; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .header-text {
+            text-align: right; font-weight: bold; font-size: 0.8rem;
+            text-transform: uppercase; color: #333; line-height: 1.2;
+        }
+
+        /* =========================================
+           3. ORGANISASI CONTENT LAYOUT
+           ========================================= */
+        .container {
+            max-width: 1200px;
+            margin: 110px auto 50px;
+            padding: 0 20px;
+            animation: fadeInUp 1s ease-out;
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .section-banner {
+            background-color: #959595;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 40px 0 25px;
+            border-radius: 4px;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .staf-grid { grid-template-columns: repeat(4, 1fr); }
+        .majlis-grid { grid-template-columns: repeat(5, 1fr); }
+
+        .member-card { text-align: center; }
+
+        .img-box {
+            border: 1px solid #000;
+            margin-bottom: 15px;
+            overflow: hidden;
+            background-color: #f4f4f4;
+            aspect-ratio: 3/4;
+        }
+
+        .img-box img {
+            width: 100%; height: 100%;
+            display: block; object-fit: cover;
+        }
+
+        .member-card h3 {
+            font-size: 0.85rem; font-weight: bold;
+            margin: 10px 0 5px; text-transform: uppercase;
+            min-height: 35px;
+        }
+
+        .member-card p {
+            font-size: 0.75rem; color: #555;
+            text-transform: uppercase; line-height: 1.3;
+        }
+
+        /* Layout Kiri & Kanan untuk Exco */
+.exco-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+}
+
+.exco-group {
+    flex: 1;
+}
+
+/* Grid 2 orang dalam satu kumpulan */
+.exco-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .exco-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+        /* =========================================
+           4. FOOTER
+           ========================================= */
+        footer {
+            margin-top: 50px;
+            padding: 40px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .staf-grid, .majlis-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-text { display: none; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-pill" id="headerPill">
+            <button class="menu-btn" onclick="togglePillMenu()">
+                <img src="Gambar/Logo JPNR.png" alt="Logo">
+            </button>
+            <nav class="pill-nav">
+                <span onclick="window.location.href='landingpage.html'">Home</span>
+                <span onclick="window.location.href='careline.html'">Careline</span>
+                
+                <div class="dropdown">
+                    <span class="dropbtn">Rumah Sewa</span>
+                    <div class="dropdown-content">
+                        <a href="siswa.html">Siswa</a>
+                        <a href="siswi.html">Siswi</a>
+                    </div>
+                </div>
+
+                <span class="active" onclick="window.location.href='organisasi.html'">Organisasi</span>
+
+                <span onclick="window.location.href='Galeri.html'">Galeri</span>
+            </nav>
+        </div>
+        <div class="header-text">
+            JAWATANKUASA PERWAKILAN NON RESIDENT<br>
+            UiTM CAWANGAN KELANTAN, KAMPUS MACHANG
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="main-title">JAWATANKUASA PERWAKILAN NON RESIDENT<br>SESI 2025/2026</h1>
+
+        <div class="section-banner">Barisan Staf Resident Non Resident</div>
+        <div class="grid-container staf-grid">
+            <div class="member-card">
+                <div class="img-box"><img src="Carta/Zafian.png" alt="Zafian"></div>
+                <h3>TS. INV. MOHD ZAFIAN MOHD ZAWAWI</h3>
+                <p>PENSYARAH KANAN FAKULTI SAINS MAKLUMAT</p>
+            </div>
+            <div class="member-card">
+                <div class="img-box"><img src="Carta/Junaidi.png" alt="Junaidi"></div>
+                <h3>JUNAIDI AWANG</h3>
+                <p>PENSYARAH KANAN FAKULTI SENI LUKIS & SENI REKA</p>
+            </div>
+            <div class="member-card">
+                <div class="img-box"><img src="Carta/Muney.png" alt="Sirajul"></div>
+                <h3>AHMAD SIRAJULMUNIR ZULKIPLI</h3>
+                <p>PEGAWAI EKSEKUTIF UNIT PENGURUSAN NON RESIDENT</p>
+            </div>
+            <div class="member-card">
+                <div class="img-box"><img src="Carta/Raja.png" alt="RajaSymsul"></div>
+                <h3>YM RAJA SYMSUL HAQ RAJA KAMRIN</h3>
+                <p>PENSYARAH KANAN FAKULTI SENI LUKIS & SENI REKA</p>
+            </div>
+        </div>
+
+        <div class="section-banner">Barisan Majlis Tertinggi</div>
+        <div class="grid-container majlis-grid">
+            <div class="member-card"><div class="img-box"><img src="Carta/Julisa.png" alt="MT1"></div></div>
+            <div class="member-card"><div class="img-box"><img src="Carta/Nuurin.jpg" alt="MT2"></div></div>
+            <div class="member-card"><div class="img-box"><img src="Carta/Amerul.jpeg" alt="MT3"></div></div>
+            <div class="member-card"><div class="img-box"><img src="Carta/Kimi.png" alt="MT4"></div></div>
+            <div class="member-card"><div class="img-box"><img src="Carta/Aqil.png" alt="MT5"></div></div>
+        </div>
+
+        <div class="exco-section">
+
+    <div class="exco-row">
+        <div class="exco-group">
+            <div class="section-banner">Exco Multimedia & Informasi</div>
+            <div class="exco-grid">
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Emy.png" alt="Exco"></div>
+                    
+                </div>
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Rai.png" alt="Exco"></div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="exco-group">
+            <div class="section-banner">Exco Program & Pembangunan Insan</div>
+            <div class="exco-grid">
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Adenin.png" alt="Exco"></div>
+                    
+                </div>
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Putri.png" alt="Exco"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exco-row">
+        <div class="exco-group">
+            <div class="section-banner">Exco Korporat & Perhubungan Antarabangsa</div>
+            <div class="exco-grid">
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Adam.png" alt="Exco"></div>
+                    
+                </div>
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Fathira.png" alt="Exco"></div>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="exco-group">
+            <div class="section-banner">Exco Aduan, Kebajikan & Keselamatan</div>
+            <div class="exco-grid">
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Danial.png" alt="Exco"></div>
+                    
+                </div>
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Adriana.png" alt="Exco"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exco-row">
+        <div class="exco-group">
+            <div class="section-banner">Exco Keusahawanan & Tajaan</div>
+            <div class="exco-grid">
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Yus.png" alt="Exco"></div>
+                    
+                </div>
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Dina.png" alt="Exco"></div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="exco-group">
+            <div class="section-banner">Exco Sukan & Kebudayaan</div>
+            <div class="exco-grid">
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Iqmal.png" alt="Exco"></div>
+                    
+                </div>
+                <div class="member-card">
+                    <div class="img-box"><img src="Carta/Leiya.png" alt="Exco"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+        <footer>
+            <p><strong>JPNR UiTMCK</strong> &copy; 2026</p>
+            <div>
+                <span>UiTM Website | </span>
+                <span>HEP | </span>
+                <span>Hubungi Kami</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function togglePillMenu() {
+            const pill = document.getElementById("headerPill");
+            pill.classList.toggle("active");
+        }
+    </script>
+</body>
+</html>

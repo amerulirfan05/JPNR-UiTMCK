@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biodata Rumah Sewa - JPNR</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding: 20px; 
+            color: #3c4043; 
+            margin: 0;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('Rumah Siswa/Rumah BG.png'); 
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .container { 
+            max-width: 850px; 
+            margin: 20px auto; 
+            background: rgba(255, 255, 255, 0.98); 
+            border-radius: 12px; 
+            padding: 30px; 
+            box-shadow: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15); 
+            position: relative;
+        }
+
+        .back-btn { text-decoration: none; color: #1a73e8; font-weight: 500; margin-bottom: 25px; display: inline-block; }
+        
+        /* UPDATE: Gunakan align-items: stretch */
+        .content-wrapper { 
+            display: flex; 
+            gap: 30px; 
+            flex-wrap: wrap; 
+            margin-bottom: 40px; 
+            align-items: stretch; 
+        }
+
+        /* UPDATE: Container gambar untuk kawal lebar dan tinggi */
+        .main-img-container {
+            flex: 0 0 350px;
+            display: flex;
+        }
+
+        .main-img { 
+            width: 100%; 
+            height: 100%; /* Akan mengikut tinggi info-details */
+            border-radius: 8px; 
+            object-fit: cover; 
+            cursor: pointer; 
+            transition: transform 0.2s; 
+        }
+        
+        .main-img:hover { transform: scale(1.02); } 
+        
+        .info-details { flex: 1; }
+        .info-details h2 { margin-top: 0; font-size: 1.5rem; color: #202124; border-bottom: 1px solid #e8eaed; padding-bottom: 15px; }
+        .info-details p { margin: 10px 0; font-size: 0.95rem; }
+
+        .overlay {
+            display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; cursor: zoom-out;
+        }
+
+        .info-section { margin-bottom: 40px; }
+        .info-section h2 { font-size: 2rem; color: #202124; margin-bottom: 20px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #f8f9fa; padding: 20px; border-radius: 12px; }
+        .info-item { display: flex; flex-direction: column; }
+        .info-item span { font-size: 0.8rem; color: #70757a; text-transform: uppercase; font-weight: bold; }
+        .info-item strong { font-size: 1.1rem; color: #3c4043; margin-top: 4px; }
+        .overlay img { max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        .rating-box { border-top: 1px solid #e8eaed; padding-top: 30px; }
+        .rating-box h3 { font-size: 1.2rem; margin-bottom: 20px; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group input, .input-group textarea { 
+            width: 100%; padding: 12px; border: 1px solid #dadce0; border-radius: 8px; box-sizing: border-box; font-family: inherit;
+        }
+
+        .stars { font-size: 28px; color: #dadce0; cursor: pointer; margin-bottom: 15px; display: inline-block; }
+        .stars span.active { color: #fbbc04; }
+
+        .btn-hantar { background: #1a73e8; color: white; border: none; padding: 10px 24px; border-radius: 20px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
+        .btn-hantar:hover { background: #1765cc; }
+
+        .comment-list { margin-top: 30px; }
+        .comment-card { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f1f3f4; }
+        
+        .user-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .user-avatar { 
+            width: 40px; height: 40px; background: #5f6368; color: white; border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; font-weight: bold; text-transform: uppercase;
+        }
+        .user-info-text .user-name { font-weight: 600; font-size: 0.9rem; color: #202124; }
+        .user-info-text .comment-date { font-size: 0.75rem; color: #70757a; }
+
+        .star-rating-display { color: #fbbc04; font-size: 0.85rem; margin-bottom: 6px; }
+        .comment-body { font-size: 0.9rem; line-height: 1.5; color: #3c4043; }
+
+        .info-details p {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 12px !important;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+            gap: 15px !important;
+            background: #f1f3f4 !important;
+        }
+
+        .info-item strong {
+            display: block;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<div id="imgOverlay" class="overlay" onclick="tutupGambar()">
+    <img id="imgZoomed">
+</div>
+
+<div class="container">
+    <a href="siswa.html" class="back-btn">← Kembali ke Senarai Rumah</a>
+    
+    <div class="content-wrapper">
+        <div class="main-img-container">
+            <img src="Rumah Siswa/Rumah contoh.webp" class="main-img" id="imgRumah" onclick="bukaGambar(this.src)">
+        </div>
+        <div class="info-details" id="mainInfoDetails">
+            <h2 id="titleRumah">Memuatkan...</h2>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h2 id="titleGridHeader">Biodata Rumah Sewa</h2>
+        <div class="info-grid" id="mainInfoGrid">
+        </div>
+    </div>
+
+    <div class="rating-box">
+        <h3>Tulis Review</h3>
+        
+        <div class="input-group">
+            <input type="text" id="userName" placeholder="Nama Anda">
+        </div>
+
+        <div class="stars" id="starGroup">
+            <span onclick="rate(1)">★</span><span onclick="rate(2)">★</span><span onclick="rate(3)">★</span><span onclick="rate(4)">★</span><span onclick="rate(5)">★</span>
+        </div>
+        
+        <div class="input-group">
+            <textarea id="userComment" placeholder="Kongsi pengalaman anda menetap di sini..."></textarea>
+        </div>
+        
+        <button class="btn-hantar" onclick="hantarKomen()">Hantar Review</button>
+
+        <div class="comment-list" id="displayKomen">
+            <p id="noCommentText" style="color: #70757a; font-size: 0.9rem;">Belum ada review untuk rumah ini.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- SEMUA LOGIK JAVASCRIPT DIKEKALKAN SEPERTI ASAL ---
+function bukaGambar(src) {
+    document.getElementById("imgZoomed").src = src;
+    document.getElementById("imgOverlay").style.display = "flex";
+}
+
+function tutupGambar() {
+    document.getElementById("imgOverlay").style.display = "none";
+}
+
+let currentRating = 0;
+function rate(n) {
+    currentRating = n;
+    const stars = document.querySelectorAll('#starGroup span');
+    stars.forEach((s, i) => {
+        if (i < n) { s.classList.add('active'); } 
+        else { s.classList.remove('active'); }
+    });
+}
+
+const databaseRumah = {
+    "CASA EMARIEYS": { pengurus: "MAIMUNAH MAT", noTel: "013-9638984", alamat: " PT 108 JLN PASIR PUTEH, 18500 MACHANG, KELANTAN ", jarak: "500 Meter", depSewa: "RM100", depUtiliti: "-", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Television, Mesin basuh, peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/casa_emarieys.jpeg" },
+    "MYSARAH HOSTEL": { pengurus: "SHAH RIZAL BIN KADIR", noTel: "019-9811164", alamat: "MYSARAH HOSTEL, PT3582 KAMPUNG BELUKAR, 18500 MACHANG, KELANTAN.", jarak: "500 Meter", depSewa: "RM100", depUtiliti: "Rm50", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Mesin basuh, Ampaian pakaian.", gambar: "Rumah Siswa/mysarah_hostel.jpeg" },
+    "RUMAH SEWA CIK YAH": { pengurus: "RADZIAH BINTI ISMAIL", noTel: "019-3760043", alamat: "LOT 296, LORONG HAJI ISMAIL, KG BUKIT ILMU, 18500 MACHANG, KELANTAN.", jarak: "500 Meter", depSewa: "RM550", depUtiliti: "RM100", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/cik_yah.jpeg" },
+    "ALIFF HOSTEL": { pengurus:" ZULKEFLI BIN YASOK",noTel:" 010-4395261", alamat:"PT 2704, KAMPUNG BELUKAR ULU SAT, 18500, MACHANG, KELANTAN.", jarak:"100 Meter", depSewa:"RM200", depUtiliti:"RM200",kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Television, Dryer pakaian, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/aliff_hostel.jpeg" },
+    "DESA BUKIT BUNGA": { pengurus:"NORAZILA BT AHMAD", noTel:" 012-6756234", alamat:"PT 2782 TAMAN DESABUKIT ILMU MACHANG KELANTAN.", jarak:"1 Kilometer", depSewa:"RM1200", depUtiliti:"RM200", kemudahan: "Katil, Tilam, Meja belajar, Kerusi, Television, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/desa_bukit_bunga.jpeg" },
+    "RUMAH DIHATIKU": { pengurus:"NUR DALILA BINTI AB AZIZ", noTel:"012-9528223", alamat:"KG BUKIT SAWA MACHANG KELANTAN.", jarak:"200 Meter", depSewa:"-", depUtiliti:"-", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Television, Mesin basuh, Peti ais, Ampaian pakaian, Dapaur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/rumah_dihatiku.jpeg" },
+    "AIMARISA HOSTEL": { pengurus:"MAIMUNAH BINTI MAT", noTel:"013-9426003", alamat:"LOT 104 KG PADANG BELUKAR JLN PASIR PUTEH ULU SAT 18500 MACHANG KELANTAN.", jarak:"300 Meter", depSewa:"RM100", depUtiliti:"Rm100",  kemudahan: "Katil, Tilam, Meja belajar, Kerusi, Sofa, Television, Mytv/Astro, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/aimarisa_hostel.jpeg" },
+    "RUMAH SEWA TAMAN IMPIAN": { pengurus:"-", noTel:"012-7628939", alamat:"RUMAH SEWA TAMAN IMPIAN KAMPUNG BANGGOL KUIN DEPAN UITM CAWANGAN MACHANG 18500 MACHANG.", jarak:"800 Meter", depSewa:"-", depUtiliti:"RM100", kemudahan: "Katil, Tilam, Meja belajar, Kerusi, Television, Dryer pakaian, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/taman_impian.jpeg" },
+    "TAMAN ALIA HOSTEL": { pengurus:"-", noTel:"019-9256517", alamat:"PT 2131 TAMAN ALIA, KAMPUNG BANGGOL KUIN, 18500 MACHANG, KELANTAN.", jarak:"350 Meter", depSewa:"RM120", depUtiliti:"RM120", kemudahan: "Katil, Tilam, Almari pakaian, Sofa, Television, Mytv/Astro, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas.", gambar: "Rumah Siswa/taman_alia.jpeg" },
+    "HOSTEL HAJI HARIS": { pengurus:"MAIMUNAH MAT", noTel:" 013-3110160", alamat:" LOT51, KG BANGGOL PETANI, BELUKAR, 18500, MACHANG, KELANTAN.", jarak:"500 Meter", depSewa:"RM100", depUtiliti:"-", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Dryer pakaian, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/haji_haris.jpeg" },
+    "KEDIAMAN NORIZAN": { pengurus:"NORIZAN BT OTHMAN", noTel:"012-6792683", alamat:"LOT 2004 KAMPUNG BELUKAR, JALAN PASIR PUTEH, 18500 MACHANG, KELANTAN.", jarak:"200 Meter", depSewa:"Rm100", depUtiliti:"RM180",  kemudahan: "Katil, Tilam, Meja belajar.", gambar: "Rumah Siswa/norizan.jpeg" },
+    "WADI HANANA": { pengurus:"-", noTel:"019-3358842", alamat:"PT 4510, KG. LEPAN SETAR, BANGGOL JUDAH, MACHANG,18500 KELANTAN.", jarak:"1 Kilometer", depSewa:"RM650", depUtiliti:"RM100", kemudahan: "Katil, Tilam, Rumah berpagar & Grill, Almari pakaian, Meja belajar, Kerusi, Lampu & Kipas, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Kelengkapan, Sofa, Meja makan.", gambar: "Rumah Siswa/wadi_hanana.jpeg" },
+    "HOSTEL SAINIZAM": { pengurus:"SAINIZAM BIN HASAN", noTel:" 011-17816012", alamat:"LOT 3919, KG SUNGAI MAS, MACHANG, 18500, KELANTAN.", jarak:"1 Kilometer", depSewa:"RM 200", depUtiliti:"RM100", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Television, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/sainizam.jpeg" },
+    "LORONG HAJI ISMAIL": { pengurus:"-", noTel:" 013-9676594", alamat:"LOT 1128 LORONG HJ ISMAIL,KG BELUKAR,JLN PASIR PUTEH,18500 MACHANG, KELANTAN.", jarak:"1 Kilometer", depSewa:"RM100", depUtiliti:"-", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Mytv/Astro, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak, Garaj ketera & Motorsikal", gambar: "Rumah Siswa/haji_ismail.jpeg" },
+    "AMAN": { pengurus:" AHMAD JAFRI BIN ABDUL RASHID", noTel:"019-2283890", alamat:" AMAN 1, PT 1136-A DESA HARAPAN A, TEPI UITM, 18500, MACHANG , KELANTAN", jarak:"1.1 Kilometer", depSewa:"RM100", depUtiliti:"-", kemudahan: "Katil, Tilam, Kerusi, Television, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak, Bekalan air boring.", gambar: "Rumah Siswa/aman.jpeg" },
+    "ZUL HOSTEL": { pengurus:" MOHD EFFENDI BIN ARIFIN", noTel:"01136397608/01136670586", alamat:"PT 3516-A KG BUKIT SEWA, ULU SAT,18500 MACHANG KELANTAN.", jarak:"200 Meter", depSewa:"RM100", depUtiliti:"RM80",  kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Mesin basuh, Peti ais, Ampaian pakaian, Peralatan memasak.", gambar: "Rumah Siswa/zul_hostel.jpeg" },
+    "DELIMA ZAITIEY 1": { pengurus:"ZAIDAH BINTI ZAKARIA", noTel:" 010-4586989", alamat:"PT 3716, DESA HARAPAN, PERKAMPUNGAN ILMU BARU 1, 18500 MACHANG, KELANTAN.", jarak:"1 Kilometer", depSewa:"RM120", depUtiliti:"RM120", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Mesin basuh, Dryer, Peralatan memasak, Peti ais, Ampaian pakaian.", gambar: "Rumah Siswa/delima_zaitiey.jpeg" },
+    "TERATAK CHE DAH": { pengurus:" TUAN ZAINON BINTI KU YUNUS", noTel:"013-9808589", alamat:" LOT 737, KAMPUNG BELUKAR ULU SAT 18500, MACHANG KELANTAN", jarak:"300 Meter", depSewa:"RM100", depUtiliti:"RM50", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Mesin basuh, Peralatan memasak, Peti ais, Ampaian pakaian, Dryer.", gambar: "Rumah Siswa/che_dah.jpeg" },
+    "PADANG SELISING VILLA HOSTEL": { pengurus:"KHALIJAH BINTI MAMAT", noTel:"013-9887877/019-9875877", alamat:" PTB 1 PERUMAHAN PKINK TAMAN SAUJANA IMPIAN PADANG SELISING 18500 MACHANG KELANTAN", depSewa:"RM500", depUtiliti:"RM200", kemudahan: "Katil, Tilam, Meja belajar, Mesin basuh, Peralatan memasak, Peti ais, Ampaian pakaian, Dryer Pakaian, Sofa, Television.", gambar: "Rumah Siswa/padang_selising.jpeg" },
+    "WANNA HOSTEL": { pengurus:"TARMIZI BIN ISMAIL", noTel:"014-5076555/014-5076555", alamat:"NO 3621,KG BUKIT TIU,CABANG 3 LEBUH RAYA ULU SAT,18500 MACHANG KELANTAN", jarak:"3 Kilometer", depSewa:"RM200", depUtiliti:"RM200", kemudahan: "Katil, Tilam, Meja belajar, Kerusi, Peti ais, Dryer pakaian, Wifi, Dapur & Gas, Mesin basuh, Television.", gambar: "Rumah Siswa/wanna_hostel.jpeg" },
+    "RUMAH SEWA ROZI": { pengurus:"En Rozi", noTel:" 012-2357607", alamat:" PT 1652 KOTA IMPIANA RESIDENS KG SUNGAI MAS 18500 MACHANG KELANTAN.", jarak:"3 Kilometer", depSewa:"RM120", depUtiliti:"RM200", kemudahan: "Katil, Tilam, Meja belajar, Kerusi, Peti ais, Dryer pakaian, Dapur & Gas, Mesin basuh.", gambar: "Rumah Siswa/rozi.jpeg" },
+    "RUMAH SEWA UST.ABU AMMAR": { pengurus:"UST.ABU AMMAR", noTel:" 013-8828832", alamat:"PT2832 DESA BUKIT ILMU KG BELUKAR", jarak:"1 Kilometer", depSewa:"RM500", depUtiliti:"RM300", kemudahan: "Peti Ais, Dapur", gambar: "Rumah Siswa/abu_ammar.jpeg" },
+    "TERATAK AL FATEH": { pengurus:"-", noTel:" 013-9230207", alamat:"LOT 3517, KAMPUNG BUKIT SAWA, MUKIM ULU SAT.", jarak:"250 Meter", depSewa:"RM200", depUtiliti:"-", kemudahan: "Katil, Tilam, Mesin basuh, Peti ais, Ampaian pakaian.", gambar: "Rumah Siswa/al_fateh.jpeg" },
+    "RUMAH KAK YAH": { pengurus:"CHE NOOR RIAH", noTel:" 019-9762587", alamat:"LOT 476 KG. BELUKAR ULU SAT MACHANG KELANTAN.", jarak:"1.3 Kilometer", depSewa:"RM100", depUtiliti:"-", kemudahan: "Katil, Tilam, Meja belajar, Kerusi, Rumah berpagar & Grill, Sofa, Kipas & Lampu, Mesin basuh, Ampaian pakaian, Dapur & Peralatan memasak, Peti ais, Meja makan, Filter penapis air, Garaj motosikal & kereta.", gambar: "Rumah Siswa/kak_yah.jpeg" },
+    "LIZALIZI HOSTEL": { pengurus:"Nik Mohd Zailizi Bin Nik Li", noTel:"019-2753890/019-2283890", alamat:" PT 4961, KG BELUKAR, JLN UITM. 18500 MACHANG, KELANTAN", jarak:"50 Meter", depSewa:"RM500", depUtiliti:"-", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Television, Mytv/Astro, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak, Coway & Wifi.", gambar: "Rumah Siswa/lizalizi.jpeg" },
+    "NNZ 2 HOSTEL": { pengurus:"UMI NORAZILA AHMAD", noTel:"011-55520008/010-3951500", alamat:"NNZ HOSTEL. LOT 2742 –B, DEPAN MASJID AL BAKTI. KG. BELUKAR, 18500 MACHANG, KELANTAN", jarak:"600 Meter", depSewa:"RM300", depUtiliti:"Rm200", kemudahan: "Katil, Tilam, Berpagar & CCTV, Almari pakaian, Meja belajar, Kerusi, Meja makan, Sofa, Wifi, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/nnz_2.jpeg" },
+    "SRI MAKMUR RESIDENCE": { pengurus:"KAMARAPANI BIN MAT", noTel:"019-9378800", alamat:"LOT 2128 TMN SRI MAKMUR,KG PADANG SELISING 18500 MACHANG, KELANTAN", jarak:"6 Kilometer", depSewa:"RM2400", depUtiliti:"-", kemudahan: "Katil, Tilam, Almari pakaian, Meja belajar, Kerusi, Sofa, Television, Wifi, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Gas, Peralatan memasak.", gambar: "Rumah Siswa/sri_makmur.jpeg" },
+    "TZ HOSTEL": { pengurus:" ZAMZURI BIN ZAKARIA", noTel:"019-9302032/013-9638202", alamat:"PT 1414, TAMAN IBNU SINA, KAMPUNG SUNGAI MAS, 18500 MACHANG, KELANTAN.", jarak:"2 Kilometer", depSewa:"RM100", depUtiliti:"RM50", kemudahan:"Katil, Tilam, Rumah berpagar & Grill, Almari pakaian, Meja belajar, Kerusi, Coway, Sofa, Television, Wifi, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Peralatan memasak.", gambar: "Rumah Siswa/tz_hostel.jpeg" },
+    "TERATAK CAMELLIA": { pengurus:"WAN HASLINI HALIMAH WAN HASSAN", noTel:"013-5336292", alamat:"Pt 4109, TAMAN CAMELIA, KG BELUKAR. 18500 MACHANG, KELANTAN", jarak:"1 Kilometer", depSewa:"RM300", depUtiliti:"RM220", kemudahan: "Katil, Tilam, Rumah berpagar & Grill, Almari pakaian, Meja belajar, Kerusi, Kipas & Lampu, Sofa, Wifi, Mesin basuh, Peti ais, Ampaian pakaian, Dapur & Peralatan memasak.", gambar: "Rumah Siswa/camellia.jpeg" },
+    "RUMAH KEMBAR": { pengurus:" TARMIZI BIN ISMAIL", noTel:" 019-9869160/017 9756315", alamat:"NO 3621,KG BUKIT TIU,CABANG 3 LEBUH RAYA ULU SAT,18500 MACHANG KELANTAN", jarak:"3 Kilometer", depSewa:"RM350", depUtiliti:"-",kemudahan: "Rumah berpagar & Grill, Katil, Tilam, Meja belajar, Kerusi, Lampu & Kipas, Peti ais, Sofa, Television, Dryer pakaian, Wifi, Dapur & Gas, Mesin basuh.", gambar: "Rumah Siswa/rumah_kembar.jpeg" },
+    "AL FATEH HOUSE": { pengurus:"FAIZAH BINTI CHE HAT", noTel:"019-9235597", alamat:" NO 91 KAMPUNG BANGGOL KUIN , 18500 MACHANG KELANTAN", jarak:"1.5 Kilometer", depSewa:"RM300", depUtiliti:"RM150", kemudahan: "Rumah berpagar & Grill, Katil, Tilam, Meja belajar, Kerusi, Lampu & Kipas, Peti ais, Wifi, Dapur & Peralatan memasak, Mesin basuh, Television, Ampaian pakaian, CCTV.", gambar: "Rumah Siswa/al_fateh_house.jpeg" },
+    "AL BAQARAH": { pengurus:"MOHD ZULKIFLI BIN MOHD ZAID", noTel:"012-9812421/013-9599649", alamat:"LOT 3310,KG LEPAN SETAR,BANGGOL JUDAH,18500 MACHANG KELANTAN", jarak:"1.7 Kilometer", depSewa:"RM50", depUtiliti:"-", kemudahan: "Rumah berpagar & Grill, Katil, Tilam, Meja belajar, Kerusi, Lampu & Kipas, Peti ais, Wifi, Dapur & Peralatan memasak, Television, Mytv, Ampaian pakaian, CCTV.", gambar: "Rumah Siswa/al_baqarah.jpeg" },
+    "RUMAH SEWA CIKGU MI": { pengurus:"NORMI BIN DERAMAN", noTel:"0192082043", alamat:"4509, KG LEPAN SETAR, BANGGOL JUDAH, 18500 MACHANG, KELANTAN", jarak:"1 Kilometer", depSewa:"RM100", depUtiliti:"-", kemudahan: "Rumah berpagar & Grill, Katil, Tilam, Meja belajar, Kerusi, Lampu & Kipas, Peti ais, Dapur & Peralatan memasak, Mesin basuh, Television, Ampaian pakaian.", gambar: "Rumah Siswa/cikgu_mi.jpeg" },
+    "TERATAK AMAN": { pengurus:" SAMTAH BINTI JUSOH", noTel:" 012-9684718", alamat:"768, JALAN PASIR PUTEH,18500 MACHANG, KELANTAN.", jarak:"1 Kilometer", depSewa:"RM200", depUtiliti:"-", kemudahan: "Katil, Tilam, Lampu & Kipas, Almari pakaian, Meja belajar, kerusi, Sofa, Mesin basuh, Peti ais, Ampaian pakaian, Meja makan, Dapur & Peralatan memasak.", gambar: "Rumah Siswa/teratak_aman.jpeg" },
+    "KB HOSTEL": { pengurus:" Hamirozana Bt Hamizan", noTel:" 019-9190196/013-9280196", alamat:"PT 2783, Desa Bukit Ilmu, 18500 Machang, Kelantan", jarak:"1 Kilometer", depSewa:"RM200", depUtiliti:"-", kemudahan: "Katil, Tilam, Lampu & Kipas, Almari pakaian, Kerusi, Ampaian pakaian.", gambar: "Rumah Siswa/kb_hostel.jpeg" }
+};
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get('rumah'); 
+
+if (id && databaseRumah[id]) {
+    const data = databaseRumah[id];
+    document.getElementById('imgRumah').src = data.gambar;
+    const infoDetails = document.getElementById('mainInfoDetails');
+    infoDetails.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 style="margin: 0; color: #1a73e8; font-size: 1.8rem;">${id}</h2>
+            <span style="background: #e6f4ea; color: #1e8e3e; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.8rem;">● TERSEDIA</span>
+        </div>
+        
+        <div style="display: grid; gap: 12px;">
+            <p style="margin: 0;"><strong>👤 Pengurus:</strong> <span style="color: #555;">${data.pengurus || "-"}</span></p>
+            <p style="margin: 0;"><strong>📞 No. Telefon:</strong> <a href="https://wa.me/6${data.noTel.replace(/[^0-9]/g, '')}" style="color: #1a73e8; text-decoration: none; font-weight: bold;">${data.noTel || "-"}</a></p>
+            <p style="margin: 0;"><strong>📍 Alamat:</strong> <span style="color: #555;">${data.alamat || "-"}</span></p>
+            <p style="margin: 0;"><strong>📏 Jarak:</strong> <span style="color: #555;">${data.jarak || "-"} dari UiTM</span></p>
+            <p style="margin: 0;"><strong>💰 Deposit Sewa:</strong> <span style="color: #d93025; font-weight: bold;">${data.depSewa || "-"}</span></p>
+            <p style="margin: 0;"><strong>⚡ Deposit Utiliti:</strong> <span style="color: #d93025; font-weight: bold;">${data.depUtiliti || "-"}</span></p>
+        </div>
+
+        <div style="margin-top: 20px; background: #fff8e1; padding: 15px; border-radius: 8px; border-left: 5px solid #fbbc04;">
+            <strong style="display: block; margin-bottom: 5px;">✨ Kemudahan Disediakan:</strong>
+            <p style="margin: 0; font-size: 0.9rem; line-height: 1.6; color: #444;">${data.kemudahan || "-"}</p>
+        </div>
+    `;
+
+    document.getElementById('titleGridHeader').innerText = "Ringkasan Eksekutif";
+    const infoGrid = document.getElementById('mainInfoGrid');
+    infoGrid.innerHTML = `
+        <div class="info-item" style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+            <span>Manager</span>
+            <strong style="color: #1a73e8;">${data.pengurus.split(' ')[0] || "-"}</strong>
+        </div>
+        <div class="info-item" style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+            <span>Distance</span>
+            <strong>${data.jarak || "-"}</strong>
+        </div>
+        <div class="info-item" style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+            <span>Sewa</span>
+            <strong style="color: #d93025;">${data.depSewa || "-"}</strong>
+        </div>
+        <div class="info-item" style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+            <span>Utility</span>
+            <strong style="color: #d93025;">${data.depUtiliti || "-"}</strong>
+        </div>
+        <div class="info-item" style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+            <span>Type</span>
+            <strong>Lelaki (Siswa)</strong>
+        </div>
+    `;
+}
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxtDBvrISdwgAGR-W90BqP58R_uAg3vzDevWqdCxQ5MNcY2DVDBoIE7u56hNWgrQfwZ/exec";
+
+async function muatTurunKomen() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const data = await response.json();
+        const box = document.getElementById('displayKomen');
+        const filteredData = data.filter(item => item.rumahId == (id || "umum"));
+
+        if (filteredData.length > 0) {
+            const noComment = document.getElementById('noCommentText');
+            if(noComment) noComment.remove();
+            box.innerHTML = ""; 
+            filteredData.reverse().forEach(item => {
+                tambahKomenKePaparan(item.nama, item.komen, item.rating, "Sudah disimpan");
+            });
+        }
+    } catch (error) {
+        console.error("Gagal memuat turun komen:", error);
+    }
+}
+
+async function hantarKomen() {
+    const name = document.getElementById('userName').value;
+    const text = document.getElementById('userComment').value;
+    if(!name || !text || currentRating === 0) {
+        return alert("Sila isi nama, rating dan komen!");
+    }
+    const btn = document.querySelector('.btn-hantar');
+    btn.innerText = "Menghantar...";
+    btn.disabled = true;
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ rumahId: id || "umum", nama: name, rating: currentRating, komen: text })
+        });
+        alert("Terima kasih! Review anda telah disimpan.");
+        location.reload();
+    } catch (error) {
+        alert("Maaf, gagal menghantar komen.");
+        btn.innerText = "Hantar Review";
+        btn.disabled = false;
+    }
+}
+
+function tambahKomenKePaparan(name, text, rating, date) {
+    const box = document.getElementById('displayKomen');
+    let starsHtml = "";
+    for(let i=0; i<5; i++) {
+        starsHtml += i < rating ? "★" : "<span style='color:#dadce0'>★</span>";
+    }
+    const entry = document.createElement('div');
+    entry.className = 'comment-card';
+    entry.innerHTML = `
+        <div class="user-header">
+            <div class="user-avatar">${name.charAt(0)}</div>
+            <div class="user-info-text">
+                <div class="user-name">${name}</div>
+                <div class="comment-date">${date}</div>
+            </div>
+        </div>
+        <div class="star-rating-display">${starsHtml}</div>
+        <div class="comment-body">${text}</div>
+    `;
+    box.appendChild(entry);
+}
+muatTurunKomen();
+</script>
+</body>
+</html>
